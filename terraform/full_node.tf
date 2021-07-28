@@ -113,5 +113,11 @@ output "privateip"{
 # copy ip into a file in local
 resource "local_file" "ip" {
     content  = aws_instance.fullnode.private_ip
-    filename = "fullnode_ip.txt"
+    filename = "fullnode_ip"
+}
+
+# copy private key into a file in local
+resource "local_file" "kp" {
+    content  = tls_private_key.key.private_key_pem
+    filename = "${var.key_name}.pem"
 }

@@ -1,0 +1,56 @@
+---
+- name: Install the required packages
+  yum:
+    name:
+      - jq
+      - git
+    state: present
+
+- name: Create a Directory {{ project_dir }}
+  file:
+    path: "{{ project_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Download testnet binaries
+  get_url:
+    url: https://github.com/crypto-org-chain/chain-main/releases/download/v2.0.0-croeseid/chain-main_2.0.0-croeseid_Linux_x86_64.tar.gz
+    mode: 0755
+    dest: ./chain-main.tar.gz
+
+
+
+- name: Extract binaries into {{ project_dir }}
+  shell: "tar -zxf chain-main.tar.gz --directory ./{{ project_dir }}"
+
+- name: Remove binaries
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - ./chain-main.tar.gz
+
+- name: Check file exists
+  stat: path=./chain-maind/bin/chain-maind
+  register: chainmaind_stat
+
+- name: Move to /usr/bin
+  command: sudo mv ./chain-maind/bin/chain-maind /usr/bin/
+  when: chainmaind_stat.stat.exists
+
+- name: Find out chain-maind version
+  shell: chain-maind version
+  register: version_output
+
+- debug: var=version_output.stdout
+
+#  unarchive:
+#    src: chain-main.tar.gz
+#    dest: ./{{ project_dir }}
+#    remote_src: True
+  
+#- name: Find out playbook's path
+#  shell: pwd
+#  register: playbook_path_output
+
+#- debug: var=playbook_path_output.stdout

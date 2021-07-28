@@ -1,0 +1,8 @@
+---
+- name: configure full node
+  hosts: all
+  vars_files:
+    - vars/variable.yml
+  roles:
+    - full_node
+
