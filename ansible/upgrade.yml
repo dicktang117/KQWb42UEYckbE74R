@@ -1,0 +1,42 @@
+---
+- name: Upgrade full node
+  hosts: all
+  vars_files:
+    - vars/variable.yml
+  tasks:
+    - name: Download testnet binaries
+      get_url:
+        url: "{{ upgrade_url }}"
+        mode: 0755
+        dest: ./chain-main-upgrade.tar.gz
+    
+    - name: Extract binaries into {{ project_dir }}
+      shell: "tar -zxf chain-main-upgrade.tar.gz --directory ./{{ project_dir }}"
+    
+    - name: Remove binaries
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - ./chain-main-upgrade.tar.gz
+    
+    - name: Check file exists
+      stat: path=./chain-maind/bin/chain-maind
+      register: chainmaind_stat
+    
+    - name: Make sure chain-main is stopped
+      become: true
+      systemd:
+        state: stopped
+        name: chain-maind
+    
+    - name: Move to /usr/bin
+      command: sudo mv ./chain-maind/bin/chain-maind /usr/bin/
+      when: chainmaind_stat.stat.exists
+    
+    - name: Make sure a chain-main is running
+      become: true
+      systemd:
+        state: started
+        name: chain-maind
+        enabled: yes    

@@ -1,2 +1,4 @@
 ---
 project_dir: chain-maind
+
+upgrade_url: https://github.com/crypto-org-chain/chain-main/releases/download/v2.0.1/chain-main_2.0.1_Linux_x86_64.tar.gz

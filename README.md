@@ -4,27 +4,27 @@
 In this git repository, I use **Crypto.org Mainnet** to build a BlockChain full node. The Terraform create an EC2 instance allowing SSH and ports 1317 & 26657 traffic in the same VPC, and invoke Ansible playbook to do the configuration.
 
 ## 2. Q & A
-Q: Please briefly explain your system and why you are going to implement it like that.
+**Q: Please briefly explain your system and why you are going to implement it like that.**
 
 A: It uses terraform to provison required resoureces, and passes the private IP to ansible as remote host. I want to keep all traffic inside the VPC to avoid any networking risk.
 
 
-Q: Please state any assumption and limitation of the system implemented
+**Q: Please state any assumption and limitation of the system implemented**
 
 A: User need to have an existed ansible+terraform EC2 in same VPC.
 
 
-Q: How would you perform upgrade software deployed and minimise downtime?
+**Q: How would you perform upgrade software deployed and minimise downtime?**
 
-A: Use an ansible playbook in different role(upgrade).
+A: Use an ansible upgrade playbook, and update the ansible variable before execution.
 
 
-Q: How would you monitor this installation?
+**Q: How would you monitor this installation?**
 
 A: By cloudwatch. But disk utilization is necessary for blockchain, I will install node exporter additionally.
 
 
-Q: How would you ensure security of this deployment
+**Q: How would you ensure security of this deployment?**
 
 A: By the security group to limit the network traffic.
 
@@ -36,7 +36,7 @@ A: By the security group to limit the network traffic.
 
 ## 4. Get started
 
-Clone this repository to your EC2 instance with Ansible & Terraform.
+First, clone this repository to your EC2 instance with Ansible & Terraform.
 
 ```bash
 # go to terraform folder
@@ -52,7 +52,15 @@ Start implementation
 ```bash
 terraform apply -auto-approve
 ```
+Upgrade mainnet blockchain from v1.x to v2.x
+```bash
+# go to ansible folder
+cd KQWb42UEYckbE74R/ansible
+```
 
-
+```bash
+# execute ansible upgrade playbook
+ansible-play upgrade.yml
+```
 
 
