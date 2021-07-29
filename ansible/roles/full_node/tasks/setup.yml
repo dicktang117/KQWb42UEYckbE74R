@@ -1,5 +1,6 @@
 ---
 - name: Install the required packages
+  become: true
   yum:
     name:
       - jq
