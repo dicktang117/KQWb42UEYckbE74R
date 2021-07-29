@@ -11,8 +11,7 @@ A: It uses terraform to provison required resoureces, and passes the private IP 
 
 **Q: Please state any assumption and limitation of the system implemented**
 
-A: User need to have an existed ansible+terraform EC2 in same VPC.
-
+A: User need to have an existed ansible+terraform EC2 in same VPC. The instance type is not suitable for a fullnode being and the storage size is too small to collect all historical data. (cut cost for my own aws account:))
 
 **Q: How would you perform upgrade software deployed and minimise downtime?**
 
