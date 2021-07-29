@@ -31,16 +31,27 @@ A: By the security group to limit the network traffic.
 
 ## 3. Pre-requisites
 - AWS VPC 
-- An EC2 installed with Ansible(>=v2.9.18) & Terraform(>=v0.15.0) in the same VPC
+- An EC2 installed with Ansible(>=v2.9.18), Terraform(>=v0.15.0) & AWS CLI in the same VPC
 - Git installed in the VPC (for clone this repository)
 
 ## 4. Get started
 
-First, clone this repository to your EC2 instance with Ansible & Terraform.
+First, clone this repository to your EC2 instance with Ansible & Terraform:
 
 ```bash
 # go to terraform folder
 cd KQWb42UEYckbE74R/terraform
+```
+
+Setup your environment including aws credentials, vpc id, subnet id and key pair name:
+
+```bash
+# setup default AWS CLI profile
+aws configure
+
+# edit terraform variables for environment setting
+### !!! Please update all variables values for fitting your environment.!!!
+vi terraform.tfvars
 ```
 
 ```bash
