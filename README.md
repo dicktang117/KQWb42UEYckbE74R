@@ -60,7 +60,7 @@ cd KQWb42UEYckbE74R/ansible
 
 ```bash
 # execute ansible upgrade playbook
-ansible-play upgrade.yml
+ansible-playbook upgrade.yml
 ```
 
 
