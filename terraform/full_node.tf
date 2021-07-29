@@ -122,17 +122,10 @@ resource "local_file" "kp" {
     filename = "${var.key_name}.pem" 
 }
 
-# add deplay to wait for ec2 reachable
-resource "time_sleep" "wait" {
-  depends_on = [local_file.kp]
-
-  destroy_duration = var.time_sleep
-}
-
 # execute ansible playbook
 resource "null_resource" "ansible" {
     depends_on = [
-      time_sleep.wait
+      local_file.ip,
     ]
     provisioner "local-exec" {
       command = "chmod 400 ${var.key_name}.pem && cd ../ansible && ansible-playbook main.yml"

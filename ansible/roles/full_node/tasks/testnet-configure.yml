@@ -1,0 +1,111 @@
+---
+- name: Initialize chain-maind
+  command: chain-maind init unicorn --chain-id testnet-croeseid-3
+  ignore_errors: True
+ 
+- name: Download files with check (sha256)
+  get_url:
+    url: https://raw.githubusercontent.com/crypto-com/testnets/main/testnet-croeseid-3/genesis.json
+    mode: 0600
+    dest: ~/.chain-maind/config/genesis.json
+    checksum: sha256:1808aef70872b306ba1af51f49b5a3ffde24e3db8c96c51f555930879f25125f
+
+- name: update minimum gas price to avoid transaction spamming
+  command: sed -i.bak -E 's#^(minimum-gas-prices[[:space:]]+=[[:space:]]+)""$#\1"0.025basetcro"#' ~/.chain-maind/config/app.toml
+
+- name: network configuration - 1
+  command: sed -i.bak -E 's#^(persistent_peers[[:space:]]+=[[:space:]]+).*$#\1"b2a4c8db43b815e1ed83ab4723a6af84ccb8e3e4@13.213.110.242:26656,c76d7d28141daf037bec919268d0f38e64fd8389@3.1.240.30:26656"#' ~/.chain-maind/config/config.toml
+
+- name: network configuration - 2
+  command: sed -i.bak -E 's#^(create_empty_blocks_interval[[:space:]]+=[[:space:]]+).*$#\1"5s"#' ~/.chain-maind/config/config.toml
+
+- name: network configuration - 3
+  command: sed -i.bak -E 's#^(timeout_commit[[:space:]]+=[[:space:]]+).*$#\1"2s"#' ~/.chain-maind/config/config.toml  
+
+# Reference: With state sync your node will download data related to the head or near the head of the chain and verify the data.
+# However, you should keep in mind that the block before state-sync trust height will not be queryable.
+
+- name: Get LATEST_HEIGHT
+  shell: curl -s https://testnet-croeseid-3.crypto.org:26657/block | jq -r .result.block.header.height
+  register: LATEST_HEIGHT
+
+- name: Set variable - LATEST_HEIGHT
+  set_fact:
+    LATEST_HEIGHT: "{{ LATEST_HEIGHT.stdout | int }}"
+
+- debug: var=LATEST_HEIGHT
+
+- name: Set variable - BLOCK_HEIGHT
+  set_fact:
+    BLOCK_HEIGHT: "{{ LATEST_HEIGHT | int - 10000 }}"
+
+- debug: var=BLOCK_HEIGHT
+
+- name: Get TRUST_HASH
+  shell: curl -s https://testnet-curl -s "https://testnet-croeseid-3.crypto.org:26657/block?height={{ BLOCK_HEIGHT | int }}" | jq -r .result.block_id.hash
+  register: TRUST_HASH
+
+- name: Set variable - TRUST_HASH
+  set_fact:
+    TRUST_HASH: "{{ TRUST_HASH.stdout }}"
+
+- debug: var=TRUST_HASH
+
+- name: Enable STATE-SYNC, setup config.toml - enable
+  replace:
+    path: ~/.chain-maind/config/config.toml
+    regexp: 'enable = false'
+    replace: 'enable = true'
+
+- name: Enable STATE-SYNC, setup config.toml - rpc_servers
+  replace:
+    path: ~/.chain-maind/config/config.toml
+    regexp: 'rpc_servers = ""'
+    replace: 'rpc_servers = "https://testnet-croeseid-3.crypto.org:26657,https://testnet-croeseid-3.crypto.org:26657"'
+
+- name: Enable STATE-SYNC, setup config.toml - BLOCK_HEIGHT
+  replace:
+    path: ~/.chain-maind/config/config.toml
+    regexp: 'trust_height = 0'
+    replace: 'trust_height = "{{ BLOCK_HEIGHT | int }}"'
+
+- name: Enable STATE-SYNC, setup config.toml - TRUST_HASH
+  replace:
+    path: ~/.chain-maind/config/config.toml
+    regexp: 'trust_hash = ""'
+    replace: 'trust_hash = "{{ TRUST_HASH }}"'
+
+
+
+
+- name: Enable rpc server
+  replace:
+    path: ~/.chain-maind/config/config.toml
+    regexp: 'laddr = "tcp://127.0.0.1:26657"'
+    replace: 'laddr = "tcp://0.0.0.0:26657"'
+
+# - name: backup app.toml
+#   copy:
+#     src: ~/.chain-maind/config/app.toml
+#     dest: ~/.chain-maind/config/app.toml.backup
+#     remote_src: yes 
+
+- name: replace app.toml    
+  copy:
+    src: "{{ playbook_dir }}/app.toml"
+    dest: ~/.chain-maind/config/app.toml
+
+- name: clone of chain-maind with systemd service
+  git:
+    repo: https://github.com/crypto-org-chain/chain-main.git
+    dest: ~/chain-maind/chain-main
+
+- name: execute shell script to create systemd service
+  shell: sh ~/chain-maind/chain-main/networks/create-service.sh
+
+- name: Make sure a chain-main is running
+  become: true
+  systemd:
+    state: started
+    name: chain-maind
+    enabled: yes
