@@ -101,4 +101,16 @@ vi vars\variable.yml
 ansible-playbook upgrade.yml
 ```
 
+## 7. Clean up all resources
+
+```bash
+# go to terraform folder
+cd KQWb42UEYckbE74R/terraform
+
+# destroy the terraform state
+terraform destroy
+
+## type "yes" if asking
+```
+
 
