@@ -31,7 +31,7 @@ A: By the security group to limit the network traffic.
 ## 3. Pre-requisites
 - AWS VPC 
 - An EC2 installed with Ansible(>=v2.9.18), Terraform(>=v0.15.0) & AWS CLI in the same VPC
-- Git installed in the VPC (for clone this repository)
+- Git installed in the EC2 (for clone this repository)
 
 ## 4. Get started
 
