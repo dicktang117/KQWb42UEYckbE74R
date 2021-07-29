@@ -52,10 +52,38 @@ Start implementation
 ```bash
 terraform apply -auto-approve
 ```
+
+## 5. Validate Results
+```bash
+# go to terraform folder
+cd KQWb42UEYckbE74R/terraform
+```
+
+```bash
+# ssh to full node instance
+sudo ssh -i full_node.pem ec2-user@{FullNodePrivateIP}
+```
+
+```bash
+# check the status of chain-maind services
+systemctl status chain-maind -l
+
+## Besides, the APIs traffic ports(26657&1317) are able to connected in same VPC network. 
+### API reference: https://crypto.org/docs/resources/blocks-and-transactions.html#common-apis-2
+```
+
+## 6. Upgrade
 Upgrade mainnet blockchain from v1.x to v2.x
+
 ```bash
 # go to ansible folder
 cd KQWb42UEYckbE74R/ansible
+```
+
+```bash
+# edit the upgrade git url is necessary in ansible's variable file
+vi vars\variable.yml
+# then edit the "upgrade_url" value
 ```
 
 ```bash
