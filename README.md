@@ -3,6 +3,9 @@
 ## 1. Description
 In this git repository, I use **Crypto.org Mainnet** to build a BlockChain full node. The Terraform create an EC2 instance allowing SSH and ports 1317 & 26657 traffic in the same VPC, and invoke Ansible playbook to do the configuration.
 
+![Alt text](/diagram.png?raw=true "Diagram")
+
+
 ## 2. Q & A
 **Q: Please briefly explain your system and why you are going to implement it like that.**
 
