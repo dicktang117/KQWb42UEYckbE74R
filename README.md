@@ -42,7 +42,7 @@ First, clone this repository to your EC2 instance with Ansible & Terraform:
 
 ```bash
 # go to terraform folder
-cd KQWb42UEYckbE74R/terraform
+cd blockchain-iac/terraform
 ```
 
 Setup your environment including aws credentials, vpc id, subnet id and key pair name:
@@ -69,7 +69,7 @@ terraform apply -auto-approve
 ## 5. Validate Results
 ```bash
 # go to terraform folder
-cd KQWb42UEYckbE74R/terraform
+cd blockchain-iac/terraform
 ```
 
 ```bash
@@ -90,7 +90,7 @@ Upgrade mainnet blockchain from v1.x to v2.x
 
 ```bash
 # go to ansible folder
-cd KQWb42UEYckbE74R/ansible
+cd blockchain-iac/ansible
 ```
 
 ```bash
@@ -108,7 +108,7 @@ ansible-playbook upgrade.yml
 
 ```bash
 # go to terraform folder
-cd KQWb42UEYckbE74R/terraform
+cd blockchain-iac/terraform
 
 # destroy the terraform state
 terraform destroy
